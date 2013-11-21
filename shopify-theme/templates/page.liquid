@@ -1,0 +1,14 @@
+{% include 'site-title' with 'white' %}
+
+<div class="page page-static page-{{ page.title | handleize }}">
+    <article class="content-block">
+        <header class="content-header border-above">
+            <h1 class="content-title content-title-solo">{{ page.title }}</h1>
+        </header>
+        <section class="content-detail border-below">
+            <div class="rte">
+                {{ page.content }}
+            </div>
+        </section>
+    </article>
+</div><!-- .page -->

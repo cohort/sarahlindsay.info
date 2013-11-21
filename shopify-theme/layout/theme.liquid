@@ -1,0 +1,145 @@
+<!doctype html>
+<!--[if lt IE 7]><html class="no-js lt-ie9 lt-ie8 lt-ie7" lang="en"> <![endif]-->
+<!--[if IE 7]><html class="no-js lt-ie9 lt-ie8" lang="en"> <![endif]-->
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if IE 9 ]><html class="ie9 no-js"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html class="no-js"> <!--<![endif]-->
+<head>
+    <meta charset="utf-8" />
+    <!--[if IE]><meta http-equiv='X-UA-Compatible' content='IE=edge,chrome=1' /><![endif]-->
+
+    <title>
+        {% if template == 'index' %}{% if page_title contains 'Welcome' %}{{ shop.name }} &ndash; Welcome{% else %}{{ page_title }}{% endif %}{% elsif template == '404' %}Page Not Found{% elsif page_title contains shop.name %}{{ page_title }}{% else %}{{ page_title }} &ndash; {{ shop.name }}{% endif %}
+    </title>
+
+    {% if page_description %}
+    <meta name="description" content="{{ page_description }}" />
+    {% endif %}
+
+    <link rel="canonical" href="{{ canonical_url }}" />
+
+    <meta name="viewport" content="width=device-width" />
+
+    <link rel="shortcut icon" href="{{ 'favicon.ico' | asset_url }}" type="image/x-icon" />
+
+    {{ content_for_header }}
+
+    {{ 'css-vendor-normalize.css' | asset_url | stylesheet_tag }}
+    {{ 'css-vendor-slimbox2.css' | asset_url | stylesheet_tag }}
+    {{ 'css-app-icons.css' | asset_url | stylesheet_tag }}
+    {{ 'css-app-gill-sans.css' | asset_url | stylesheet_tag }}
+    {{ 'css-app-main.css' | asset_url | stylesheet_tag }}
+
+    {{ '//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js' | script_tag }}
+    {{ 'api.jquery.js' | shopify_asset_url | script_tag }}
+    {{ 'js-vendor-modernizr-2.6.2.min.js'  | asset_url | script_tag }}
+
+    {{ 'option_selection.js' | shopify_asset_url | script_tag }}
+
+    {% if template == 'product' %}
+    <script>var switchTo5x=true;</script>
+    <script src="http://w.sharethis.com/button/buttons.js"></script>
+    <script>stLight.options({publisher: "1808dba8-c0fe-4590-aee8-00880a6fd459", doNotHash: false, doNotCopy: false, hashAddressBar: false});</script>
+    {% endif %}
+</head>
+
+<body id="body-{{ page_title | handle }}">
+
+    {% assign wrapperClass = 'light-bg' %}
+    {% if template == 'page' or template == 'index' or template == '404' %}
+        {% assign wrapperClass = '' %}
+    {% endif %}
+
+    <div class="wrapper {{ wrapperClass }}">
+
+        {% if template == 'index' %}
+            <div class="site-bg js-parallax" data-parallax-el=".parallaxed" style="background-image:url({{'img-app-bg_shop.jpg' | asset_url}});"></div>
+        {% elsif template == 'page' %}
+            {% capture img_src %}img-app-bg_{{page.title | handle}}.jpg{% endcapture %}
+            <div class="site-bg" style="background-image:url({{ img_src | asset_url }});"></div>
+        {% elsif template == '404' %}
+            <div class="site-bg" style="background-image:url({{ 'img-app-bg_404.jpg' | asset_url }});"></div>
+        {% endif %}
+
+        <p class="menu-trigger-open">
+            <a href="#">
+                <span aria-hidden="true" class="icon icon-reorder"></span>
+                <span class="menu-text">Menu</span>
+            </a>
+        </p>
+        <div class="cart-hud">
+            <div class="cart-trigger">
+                <a href="/cart">
+                    {% assign cartImg = 'img-app-shopping_bag_icon.svg' %}
+                    {% if template == 'page' or template == 'index' or template == '404' %}
+                        {% assign cartImg = 'img-app-shopping_bag_icon_white.svg' %}
+                    {% endif %}
+                    <img class="js-svg cart-svg" src="{{cartImg | asset_url}}" data-alt-src="{{'img-app-shopping_bag_icon.svg' | asset_url}}}}" width="20" height="25" alt="View shopping bag">
+                    <p class="cart-count{% if cart.item_count == 0 %} empty{% endif %}">{{ cart.item_count }}</p>
+                </a>
+            </div>
+            <div class="cart-hud-message"></div>
+        </div>
+
+        <nav class="menu">
+            <p class="menu-trigger-close">
+                <a href="#">
+                    <span aria-hidden="true" class="icon icon-reorder"></span>
+                    <span class="menu-text">Close</span>
+                </a>
+            </p>
+            <ul>
+                {% for link in linklists.main-menu.links %}
+                <li class="nav-item{% if forloop.first %} first{% elsif forloop.last %} last{% endif %}{% if link.active %} active{% endif %}">
+                    {{ link.title | link_to: link.url }}
+                </li>
+                {% endfor %}
+            </ul>
+        </nav>
+
+        <div class="content">
+
+            {{ content_for_layout }}
+
+        </div>
+
+        {% if template == 'product' %}
+        <div class="share-popup">
+            <a href="#" class="close"><span></span></a>
+            <p class="border-below">Share</p>
+            <div class="share-options">
+                <span class='st_facebook_large' displayText='Facebook'></span>
+                <span class='st_twitter_large' displayText='Tweet'></span>
+                <span class='st_email_large' displayText='Email'></span>
+            </div>
+        </div>
+        {% endif %}
+
+    </div>
+
+    {{ 'js-vendor-console.js'  | asset_url | script_tag }}
+    {{ 'js-vendor-jquery.sticky.js'  | asset_url | script_tag }}
+
+    {{ 'js-vendor-jquery.animate-enhanced.min.js'  | asset_url | script_tag }}
+    {{ 'js-vendor-masonry.pkgd.min.js'  | asset_url | script_tag }}
+    {{ 'js-vendor-slimbox2.js'  | asset_url | script_tag }}
+    {{ 'js-vendor-jquery.cookie.js'  | asset_url | script_tag }}
+    {{ 'js-app-SL.js'  | asset_url | script_tag }}
+    {{ 'js-app-shop.js'  | asset_url | script_tag }}
+    {{ 'js-app-menu.js'  | asset_url | script_tag }}
+    {{ 'js-app-smooth-scroll.js'  | asset_url | script_tag }}
+    {{ 'js-app-collections.js'  | asset_url | script_tag }}
+    {{ 'js-app-init.js'  | asset_url | script_tag }}
+
+    <!-- Google Analytics -->
+    <script>
+        (function(b,o,i,l,e,r){b.GoogleAnalyticsObject=l;b[l]||(b[l]=
+        function(){(b[l].q=b[l].q||[]).push(arguments)});b[l].l=+new Date;
+        e=o.createElement(i);r=o.getElementsByTagName(i)[0];
+        e.src='//www.google-analytics.com/analytics.js';
+        r.parentNode.insertBefore(e,r)}(window,document,'script','ga'));
+        ga('create','UA-XXXXX-X');ga('send','pageview');
+    </script>
+
+</body>
+</html>

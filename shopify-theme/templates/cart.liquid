@@ -1,0 +1,137 @@
+{% include 'site-title' %}
+
+<div class="page page-cart">
+
+    <header class="content-header">
+        <h1 class="content-title border-above">
+            <span class="inner">shopping bag</span>
+        </h1>
+    </header>
+
+
+    <div class="cart-content">
+
+        <!-- CART START -->
+
+        {% if cart.item_count > 0 %}
+
+            <form action="/cart" method="post">
+
+                <table>
+
+                    <thead>
+                        <tr>
+                            <th class="cart-table-item">item<span class="cart-table-plural">s</span>:</th>
+                            <th>&nbsp;</th>
+                            <th class="cart-table-price">price:</th>
+                            <th class="cart-table-qty">qty:</th>
+                            <th class="cart-table-total">total:</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+
+                    {% for item in cart.items %}
+
+                        {% comment %}
+                            Determining the handle of the collection that was last seen for the 'continue shopping' link.
+                        {% endcomment %}
+
+                        {% if forloop.first %}
+                            {% assign collection_url = item.product.collections.first.url %}
+                            {% if collection_url == '/collections/frontpage' or collection_url == '' %}{% assign collection_url = '/collections/all' %}{% endif %}
+                        {% endif %}
+
+                        <tr>
+                            <td>
+                                <a href="{{ item.product.url | within: collections.all }}">
+                                    <img src="{{ item.product.featured_image.src | product_img_url: 'small' }}" alt="{{ item.title | escape }}" />
+                                </a>
+                            </td>
+                            <td>
+                                <p>
+                                    <a href="{{ item.product.url | within: collections.all }}">
+                                        {{ item.title }}
+                                        {% if item.product.variants.size == 1 %}
+                                            {% unless item.variant.title contains 'Default' %}
+                                                - {{ item.variant.title }}
+                                            {% endunless %}
+                                        {% endif %}
+                                    </a>
+                                </p>
+                                {% comment %}
+                                Line Item Properties
+                                {% endcomment %}
+                                {% if item.properties.size > 0 %}
+                                    <p>
+                                        {% for p in item.properties %}
+                                            {% unless p.last == blank %}
+                                                {{ p.first }}:
+                                                {% if p.last contains '/uploads/' %}
+                                                    <a href="{{ p.last }}">{{ p.last | split: '/' | last }}</a>
+                                                {% else %}
+                                                    {{ p.last }}
+                                                {% endif %}
+                                                <br />
+                                            {% endunless %}
+                                        {% endfor %}
+                                    </p>
+                                {% endif %}
+                            </td>
+                            <td class="cart-table-price">{{ item.price | money }}</td>
+                            <td class="cart-table-qty">
+                                <select name="updates[]" id="updates_{{ item.id }}">
+                                    <option {% if item.quantity == 0 %}selected{% endif %}>0</option>
+                                    <option {% if item.quantity == 1 %}selected{% endif %}>1</option>
+                                    <option {% if item.quantity == 2 %}selected{% endif %}>2</option>
+                                    <option {% if item.quantity == 3 %}selected{% endif %}>3</option>
+                                    <option {% if item.quantity == 4 %}selected{% endif %}>4</option>
+                                    <option {% if item.quantity == 5 %}selected{% endif %}>5</option>
+                                    <option {% if item.quantity == 6 %}selected{% endif %}>6</option>
+                                    <option {% if item.quantity == 7 %}selected{% endif %}>7</option>
+                                    <option {% if item.quantity == 8 %}selected{% endif %}>8</option>
+                                    <option {% if item.quantity == 9 %}selected{% endif %}>9</option>
+                                </select>
+                            </td>
+                            <td class="cart-table-total">{{ item.line_price | money }}</td>
+                        </tr>
+                    {% endfor %}
+
+                    </tbody>
+
+                </table>
+
+                <div class="cart-subtotal">
+                    <p><strong>subtotal:</strong> (incl. VAT)</p>
+                    <p class="cart-subtotal-price">{{ cart.total_price | money }}</p>
+                </div>
+
+                <div class="cart-controls clearfix">
+                    <input type="submit" name="checkout" value="Check out" class="btn btn-dark">
+                    <input type="submit" name="update" value="Update bag" class="btn">
+                    <p><a href="/#shop">Continue shopping</a></p>
+                </div>
+
+                <div class="cart-payment">
+                    <p>Payment powered by</p>
+                    <img src="{{ 'img-app-paypal_logo.png' | asset_url }}" alt="Paypal">
+                </div>
+
+                <div class="shipping-note">
+                    <p><strong>Please note:</strong> shipping costs will be added after the next step.</p>
+                </div>
+            </form>
+
+            {% else %}
+
+            <div>
+                <p><strong>Your bag is currently empty</strong></p>
+                <p>You can <a href="/collections/all">browse the shop here</a>.</p>
+            </div>
+
+            {% endif %}
+
+        <!-- CART END -->
+
+    </div>
+</div><!-- .cart -->

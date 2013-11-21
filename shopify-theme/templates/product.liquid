@@ -1,0 +1,194 @@
+{% include 'site-title' %}
+
+<div class="page page-shop-detail" itemscope itemtype="http://schema.org/Product">
+    <meta itemprop="url" content="{{ shop.url }}{{ product.url }}" />
+    <meta itemprop="image" content="{{ product.featured_image.src | product_img_url: 'grande' }}" />
+    <header class="content-header border-above js-sticky" data-sticky-top="115">
+        <p class="content-nav"><a href="{{ shop.url }}/#shop">Back to listing</a></p>
+    </header>
+    <div class="shop-product-detail-container">
+        <div class="shop-product-detail">
+            <img class="product-preview" src="{{ product.featured_image | product_img_url: 'large' }}" alt="{{ product.featured_image.alt | escape }}" />
+
+            <h1 class="product-title" itemprop="name">{{ product.title }}</h1>
+            <p class="product-price" itemprop="offers" itemscope itemtype="http://schema.org/Offer">
+                <meta itemprop="priceCurrency" content="{{ shop.currency }}" />
+                {% if product.available %}
+                <link itemprop="availability" href="http://schema.org/InStock" />
+                {% else %}
+                <link itemprop="availability" href="http://schema.org/OutOfStock" />
+                {% endif %}
+                <span itemprop="price" class="price">{{ product.price | money }}</span>
+            </p>
+            <form action="/cart/add" method="post" enctype="multipart/form-data">
+                {% assign hide_default_title = false %}
+                {% if product.variants.size == 1 and product.variants.first.title contains 'Default' %}
+                {% assign hide_default_title = true %}
+                {% endif %}
+
+                <div id="product-variants" class="product-variants {% if hide_default_title %}hidden{% endif %}">
+                    <select id="product-select" name="id" class="hidden">
+                        {% for variant in product.variants %}
+                        <option value="{{ variant.id }}">{{ variant.title }} - {{ variant.price | money }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="product-cta">
+                    {% if product.available %}
+                        <input type="submit" name="add" id="add" class="btn" value="Add to bag">
+                        <p class="btn btn-borderless"><a class="share-btn" href="#">Share</a></p>
+                    {% else %}
+                        <p>This product is currently out of stock</p>
+                    {% endif %}
+                </div>
+            </form>
+            <div class="product-description rte" itemprop="description">
+                <h2 class="caps">Description</h2>
+                {{ product.description }}
+            </div>
+        </div><!--
+        --><div class="shop-product-detail-images">
+                {% if product.images.size > 0 %}
+                    {% for image in product.images %}
+                        <img src="{{ image.src | product_img_url: 'large' }}" alt="{{ image.alt | escape }}" />
+                    {% endfor %}
+                {% endif %}
+        </div>
+    </div><!-- .shop-product-detail-container -->
+</div><!-- .page -->
+
+
+<script>
+jQuery(function($) {
+
+    var selectCallback = function(variant, selector) {
+
+        isAdd = true;
+
+        if (variant) {
+
+            if (variant.available) {
+
+                // Selected a valid variant that is available.
+                $('#add').removeClass('disabled').removeAttr('disabled').val('Add to Bag').fadeTo(200,1);
+
+                // If item is backordered yet can still be ordered, we'll show special message.
+                if (variant.inventory_management && variant.inventory_quantity <= 0) {
+                  $('#selected-variant').html({{ product.title | json }}{% unless hide_default_title %} + ' - ' + variant.title{% endunless %});
+                }
+
+            } else {
+                // Variant is sold out.
+                $('#add').val('Sold Out').addClass('disabled').attr('disabled', 'disabled').fadeTo(200,0.5);
+            }
+
+            // update the price
+            $('.product-price .price').html(Shopify.formatMoney(variant.price, "{{ shop.money_format }}"));
+
+        } else {
+            // variant doesn't exist.
+            $('#add').val('Unavailable').addClass('disabled').attr('disabled', 'disabled').fadeTo(200,0.5);
+        }
+    };
+
+    new Shopify.OptionSelectors('product-select', { product: {{ product | json }}, onVariantSelected: selectCallback });
+
+    // Add label if only one product option and it isn't 'Title'.
+    {% if product.options.size == 1 and product.options.first != 'Title' %}
+        $('.selector-wrapper:eq(0)').prepend('<label>{{ product.options.first }}</label>');
+    {% endif %}
+
+    // Auto-select first available variant on page load.
+    {% assign found_one_in_stock = false %}
+    {% for variant in product.variants %}
+        {% if variant.available and found_one_in_stock == false %}
+            {% assign found_one_in_stock = true %}
+            {% for option in product.options %}
+                $('.single-option-selector:eq({{ forloop.index0 }})').val({{ variant.options[forloop.index0] | json }}).trigger('change');
+            {% endfor %}
+        {% endif %}
+    {% endfor %}
+
+
+    // AJAX Cart
+    var isAdd = true;
+    var hudTimeout;
+    var $hud = $(".cart-hud");
+    var $hudMsg = $hud.find(".cart-hud-message");
+
+    $hud.on("mouseover", function(){ clearTimeout(hudTimeout); });
+    $hud.on("mouseout", setHideHudTimeout);
+
+    $('form[action="/cart/add"]').submit(function(e) {
+        e.preventDefault();
+        toggleItem($(this));
+    });
+
+    function toggleItem(form) {
+        var ajax;
+        var data = form.serialize();
+        if (isAdd) {
+            ajax = $.ajax({
+                type: 'POST',
+                url: '/cart/add.js',
+                dataType: 'json',
+                data: data
+            });
+        } else {
+            data += "&quantity=0";
+            ajax = $.ajax({
+                type: 'POST',
+                url: '/cart/change.js',
+                dataType: 'json',
+                data: data
+            });
+        }
+
+        ajax.done(updateForm);
+    };
+
+    function updateForm(data) {
+        var $cartCount = $(".cart-count");
+        var cartCounter = parseInt($cartCount.text(), 10);
+
+        var $button = $("#add");
+        var buttonVal;
+
+        var hudMessage = "<p class='added border-below'>Added to bag</p><p><a href='/cart'>Go to checkout</a></p>";
+
+        if (isAdd) {
+            cartCounter++;
+            buttonVal = "Remove";
+        } else {
+            cartCounter--;
+            buttonVal = "Add to bag";
+        }
+
+        $cartCount.text(cartCounter);
+        if (isAdd) {
+            $cartCount.fadeIn();
+            $hudMsg.html(hudMessage).fadeIn();
+            $hud.addClass("active");
+            setHideHudTimeout();
+        } else {
+            if (cartCounter === 0) {
+                $cartCount.fadeOut();
+            }
+            hideHud();
+        }
+        $button.val(buttonVal).blur();
+        isAdd = !isAdd;
+    }
+
+    function setHideHudTimeout() {
+        clearTimeout(hudTimeout);
+        hudTimeout = setTimeout(hideHud, 3000);
+    }
+    function hideHud() {
+        $hudMsg.fadeOut();
+        $hud.removeClass("active");
+    }
+});
+
+</script>

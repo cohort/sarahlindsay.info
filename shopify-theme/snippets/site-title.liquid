@@ -1,0 +1,6 @@
+{% capture img_src %}img-app-sarah_lindsay_logo{% if site-title %}_{{ site-title }}{% endif %}.svg{% endcapture %}
+<div class="js-sticky js-sticky-site-title">
+    <div class="site-title">
+        <img class="js-svg site-title-svg" src="{{img_src | asset_url}}" data-alt-src="{{'img-app-sarah_lindsay_logo.svg' | asset_url}}" alt="Sarah Lindsay" width="100%" height="47">
+    </div>
+</div>

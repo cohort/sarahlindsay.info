@@ -1,0 +1,11 @@
+{% include 'site-title' %}
+
+{% include 'blog-header' %}
+
+    {% include 'blog-article' with article %}
+
+    <div class="blog-controls clearfix">
+        <p class="back"><a href="{{ blog.url }}">Back to blog</a></p>
+    </div>
+
+{% include 'blog-footer' %}

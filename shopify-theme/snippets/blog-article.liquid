@@ -1,0 +1,17 @@
+<div class="blog-item clearfix">
+    <div class="blog-item-images">
+        {{ article.excerpt }}
+    </div>
+    <div class="blog-item-detail editorial">
+        <h2>
+            {% if template == 'blog' %}<a href="{{ article.url }}">{% endif %}
+                {{ article.title }}
+            {% if template == 'blog' %}</a>{% endif %}
+        </h2>
+        <p>-</p>
+        <p>Posted: <time pubdate datetime="{{ article.published_at | date: '%Y-%m-%d' }}">{{ article.published_at | date: '%d %B %Y' }}</time></p>
+        <div class="rte">
+            {{ article.content }}
+        </div>
+    </div>
+</div>

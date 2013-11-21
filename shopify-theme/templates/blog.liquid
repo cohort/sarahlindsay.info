@@ -1,0 +1,23 @@
+{% paginate blog.articles by 5 %}
+
+{% include 'site-title' %}
+
+{% include 'blog-header' %}
+
+    {% for article in blog.articles %}
+
+        {% include 'blog-article' with article %}
+
+    {% endfor %}
+
+    {% if paginate.pages > 1 %}
+    <div class="blog-controls clearfix">
+        {{ paginate | default_pagination | replace: '&laquo; Previous', 'Newer articles' | replace: 'Next &raquo;', 'Older articles' }}
+    </div>
+    {% endif %}
+
+{% include 'blog-footer' %}
+
+
+
+{% endpaginate %}

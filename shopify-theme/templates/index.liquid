@@ -1,0 +1,7 @@
+{% assign page = pages.front-page %}
+
+    {% include 'site-intro' with page %}
+
+{% assign collection = collections.all %}
+
+    {% include 'product-list' with collection %}

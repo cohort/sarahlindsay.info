@@ -1,0 +1,40 @@
+<div class="page {% if template contains 'index' %}page-shop js-alt{% else %}page-shop-inner{% endif %}" id="shop" data-alt-offset="1" data-alt-class="light-bg">
+
+    <header class="content-header border-above">
+        <p class="content-type">shop</p>
+        <h2 class="content-title">{{ settings.collection_title }}</h2>
+    </header>
+
+    <div class="shop-categories js-sticky" data-sticky-top="110">
+        <ul class="horizontal-list">
+            <li><a href="/collections/all">All</a></li>
+            {% for collection in collections %}
+                {% if collection.products.size > 0 %}
+                    <li><a href="{{ collection.url }}">{{ collection.title }}</a></li>
+                {% endif %}
+            {% endfor %}
+        </ul>
+        <div class="shop-categories-list-container js-sticky" data-sticky-top="68">
+            <select class="shop-categories-list">
+                <option value="/collections/all/">View - All</option>
+                {% for collection in collections %}
+                    {% if collection.products.size > 0 %}
+                        <option value="{{ collection.url }}">View - {{ collection.title }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="shop-products">
+        <div class="masonry-item-width"></div>
+        <div class="masonry-gutter-width"></div>
+
+        {% for product in collection.products %}
+            {% include 'product-item' %}
+        {% else %}
+            <p>No products found</p>
+        {% endfor %}
+
+    </div>
+</div>

@@ -1,0 +1,10 @@
+{% if product.available %}
+<div class="shop-product">
+    <a class="shop-product-img" href="{{ product.url }}">
+        <span class="shop-product-img-view">view</span>
+        <img src="{{ product.featured_image.src | product_img_url: 'large' }}" alt="{{ product.featured_image.alt | escape }}">
+        <span class="shop-product-img-bg"></span>
+    </a>
+    <p>{{ product.title }} - {{ product.price | money }} | <a class="shop-product-view" href="{{ product.url }}">View</a></p>
+</div>
+{% endif %}
