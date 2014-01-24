@@ -28,7 +28,7 @@ Instead of a list of all class selectors,
 you can use the generic selector below, but it's slower:
 [class*="icon-"] {
 */
-.icon-reorder {
+.icon-reorder, .icon-close {
 	font-family: 'icons';
 	speak: none;
 	font-style: normal;
@@ -40,4 +40,7 @@ you can use the generic selector below, but it's slower:
 }
 .icon-reorder:before {
 	content: "\f0c9";
+}
+.icon-close:before {
+	content: "\e000";
 }

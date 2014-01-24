@@ -7,6 +7,7 @@ SL.shop = (function() {
 
     var init, initMasonry, initSiteTitlePositioning, initShare, initPromoBlock, initSelect,
     updateMasonry,
+    masonryUpdateTimeout = null,
     $masonry;
 
     init = function() {
@@ -27,6 +28,13 @@ SL.shop = (function() {
                 "padding-top": paddingTop + "px"
             });
         }
+
+        if (!!masonryUpdateTimeout) {
+            clearTimeout(masonryUpdateTimeout);
+        }
+        masonryUpdateTimeout = setTimeout(function(){
+            updateMasonry();
+        }, 500);
     };
 
     initPromoBlock = function () {
@@ -77,10 +85,8 @@ SL.shop = (function() {
         var shopContainer = document.querySelector('.shop-products');
         if (shopContainer) {
             $masonry = new Masonry( shopContainer, {
-                columnWidth: 480,
-                gutter: 20,
                 itemSelector: '.shop-product',
-                isFitWidth: true
+                isResizeBound: false
             });
         }
     };

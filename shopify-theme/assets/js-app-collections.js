@@ -24,6 +24,7 @@ SL.collections = (function() {
         var collectionsContainer = document.querySelector('.js-collections');
         if (collectionsContainer) {
             initCollapsables();
+            $('a[rel^="lightbox"]').magnificPopup({type:'image'});
         }
     };
 

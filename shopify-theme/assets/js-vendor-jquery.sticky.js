@@ -21,11 +21,12 @@
     },
     $window = $(window),
     $document = $(document),
+    $content = $(".content"),
     sticked = [],
     windowHeight = $window.height(),
     scroller = function() {
-      var scrollTop = $window.scrollTop(),
-        documentHeight = $document.height(),
+      var scrollTop = $content.scrollTop(),
+        documentHeight = $content.height(),
         dwh = documentHeight - windowHeight,
         extra = (scrollTop > dwh) ? dwh - scrollTop : 0;
 
@@ -67,7 +68,7 @@
       }
     },
     resizer = function() {
-      windowHeight = $window.height();
+      windowHeight = $content.height();
     },
     methods = {
       init: function(options) {
@@ -106,13 +107,16 @@
     };
 
   // should be more efficient than using $window.scroll(scroller) and $window.resize(resizer):
-  if (window.addEventListener) {
-    window.addEventListener('scroll', scroller, false);
-    window.addEventListener('resize', resizer, false);
-  } else if (window.attachEvent) {
-    window.attachEvent('onscroll', scroller);
-    window.attachEvent('onresize', resizer);
-  }
+  //if (window.addEventListener) {
+  //  window.addEventListener('scroll', scroller, false);
+  //  window.addEventListener('resize', resizer, false);
+  //} else if (window.attachEvent) {
+  //  window.attachEvent('onscroll', scroller);
+  //  window.attachEvent('onresize', resizer);
+  //}
+  $content.on('scroll.sticky', scroller);
+  $window.on('resize.sticky', resizer);
+
 
   $.fn.sticky = function(method) {
     if (methods[method]) {

@@ -5,6 +5,10 @@ SL.smoothScroll = (function() {
 
     "use strict";
 
+    // vars
+    var $content = $(".content");
+
+    // funcs
     var initLinks, initParallax, initSticky, initAltClassDetection;
 
     // init smooth scroll for internal links
@@ -12,7 +16,7 @@ SL.smoothScroll = (function() {
         $("a[href^='#']").on('click', function(e) {
             e.preventDefault();
             if (this.hash.length > 0) {
-                $('html, body').animate({ scrollTop: $(this.hash).offset().top }, SL.transitionTime);
+                $content.animate({ scrollTop: $(this.hash).offset().top }, SL.transitionTime);
             }
         });
     };
@@ -21,9 +25,9 @@ SL.smoothScroll = (function() {
     initParallax = function() {
         if (Modernizr.touch || !Modernizr.csstransforms3d) { return; }
         var $parallaxEl = $(".js-parallax");
-        $(window).on("scroll", function() {
+        $content.on("scroll.parallax", function() {
             var speed = 2;
-            $parallaxEl.css("backgroundPosition", "center " + (-window.pageYOffset / speed) + "px");
+            $parallaxEl.css("backgroundPosition", "center " + (-$content.scrollTop() / speed) + "px");
             var parallaxedEl = $parallaxEl.data("parallax-el");
             if (parallaxedEl) {
                 var $parallaxedEl = $(parallaxedEl);
@@ -50,7 +54,6 @@ SL.smoothScroll = (function() {
     initAltClassDetection = function() {
         var $alt = $(".js-alt");
         if ($alt.length > 0) {
-            var altPos = $alt.position().top;
             var altClass = $alt.data("alt-class");
             var altOffset = $alt.data("alt-offset");
             var isAltClass = false;
@@ -61,7 +64,7 @@ SL.smoothScroll = (function() {
             }
 
             // update on scroll
-            $(window).scroll(function() {
+            $content.on("scroll.alt", function() {
                 checkScrollPos();
             });
 
@@ -71,8 +74,7 @@ SL.smoothScroll = (function() {
 
 
         function checkScrollPos() {
-            var scrollTop = $(document).scrollTop();
-            if (scrollTop > altPos - altOffset) {
+            if ($alt.position().top - altOffset < 0) {
                 if (!isAltClass) {
                     $wrapper.addClass(altClass);
                     if (Modernizr.svg) {

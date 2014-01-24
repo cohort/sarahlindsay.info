@@ -1,4 +1,4 @@
-<div class="page {% if template contains 'index' %}page-shop js-alt{% else %}page-shop-inner{% endif %}" id="shop" data-alt-offset="1" data-alt-class="light-bg">
+<div class="page {% if template contains 'index' %}page-shop js-alt{% else %}page-shop-inner{% endif %}" id="shop" data-alt-offset="50" data-alt-class="light-bg">
 
     <header class="content-header border-above">
         <p class="content-type">shop</p>
@@ -27,8 +27,8 @@
     </div>
 
     <div class="shop-products">
-        <div class="masonry-item-width"></div>
-        <div class="masonry-gutter-width"></div>
+        <!-- <div class="masonry-item-width"></div>
+        <div class="masonry-gutter-width"></div> -->
 
         {% for product in collection.products %}
             {% include 'product-item' %}

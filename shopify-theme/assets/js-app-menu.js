@@ -11,36 +11,52 @@ SL.menu = (function() {
         $menu,
         $openTrigger,
         $closeTrigger,
-        closeTimeout,
+        $body,
+        $content,
+        $window = $(window),
+        defaultMenuWidth = 230,
+        mobileBreakpoint = 600,
+        isOpen = false,
 
         // functions
-        init, openMenu, closeMenu, setHideMenuTimeout;
+        init, toggleMenu, openMenu, closeMenu, openImmediateMenu, closeImmediateMenu, onResize;
 
 
     // init
     init = function(){
+        $body           = $("body");
         $wrapper        = $(".wrapper");
+        $content        = $(".content");
         $menu           = $wrapper.find(".menu");
         $openTrigger    = $wrapper.find(".menu-trigger-open");
-        $closeTrigger   = $wrapper.find(".menu-trigger-close");
+        $closeTrigger   = $(".menu-trigger-close");
 
-        $openTrigger.find('a').on("click", openMenu);
+        $openTrigger.find('a').on("click", toggleMenu);
         $closeTrigger.find('a').on("click", closeMenu);
 
         var menuHasOpened = $.cookie("menuHasOpened");
-        if (!menuHasOpened && $(window).width() >= 600 && Modernizr.csstransforms3d) {
-            $wrapper.addClass("menu-open-immediate").addClass("menu-open");
-            $menu.on("mouseover", function(){ clearTimeout(closeTimeout); });
-            $menu.on("mouseout", setHideMenuTimeout);
-            setHideMenuTimeout();
-            $.cookie("menuHasOpened", "true");
+        if (!menuHasOpened && $window.width() >= mobileBreakpoint && Modernizr.csstransforms3d) {
+
+            openImmediateMenu();
+            $.cookie("menuHasOpened", "true", { expires: 31, path: "/" });
+
+            // update on scroll
+            $content.on("scroll.init", function() {
+                closeImmediateMenu();
+            });
         }
+
+        $window.on("resize", onResize);
     };
 
 
-    setHideMenuTimeout = function() {
-        clearTimeout(closeTimeout);
-        closeTimeout = setTimeout(closeMenu, 3000);
+    // toggle menu
+    toggleMenu = function(e) {
+        if ($body.hasClass("menu-open")) {
+            closeMenu(e);
+        } else {
+            openMenu(e);
+        }
     };
 
 
@@ -50,11 +66,34 @@ SL.menu = (function() {
             e.preventDefault();
             e.stopPropagation();
         }
-        $wrapper.addClass("menu-open");
+
+        var windowWidth = $window.width();
+        var wrapperWidth, menuWidth;
+
+        if (windowWidth > mobileBreakpoint) {
+            menuWidth = defaultMenuWidth;
+            wrapperWidth = windowWidth - menuWidth;
+        } else {
+            menuWidth = windowWidth;
+            wrapperWidth = wrapperWidth;
+        }
+
+        $wrapper
+            .css({
+                width:wrapperWidth+"px",
+                left:menuWidth+"px"
+            });
+
+        $body
+            .addClass("menu-open");
+
+        isOpen = true;
+
         setTimeout(function(){
             SL.shop.updateMasonry();
-        }, 1000);
+        }, 500);
     };
+
 
 
     // show flyout on page load
@@ -63,17 +102,85 @@ SL.menu = (function() {
             e.preventDefault();
             e.stopPropagation();
         }
-        $wrapper.removeClass("menu-open-immediate").removeClass("menu-open");
-        clearTimeout(closeTimeout);
+
+        var windowWidth = $window.width();
+        var wrapperWidth, menuWidth;
+
+        if (windowWidth > mobileBreakpoint) {
+            menuWidth = defaultMenuWidth;
+            wrapperWidth = windowWidth - menuWidth;
+        } else {
+            menuWidth = windowWidth;
+            wrapperWidth = wrapperWidth;
+        }
+
+        $wrapper
+            .css({
+                  width:windowWidth+"px",
+                  left:0
+            });
+
+
+        $body
+            .removeClass("menu-open-immediate")
+            .removeClass("menu-open");
+
+        isOpen = false;
+
         setTimeout(function(){
             SL.shop.updateMasonry();
-        }, 1000);
+        }, 500);
+    };
+
+
+    openImmediateMenu = function() {
+        var windowWidth = $window.width();
+        var menuWidth = defaultMenuWidth,
+            wrapperWidth = windowWidth - menuWidth;
+
+        $wrapper
+            .css({
+                width:wrapperWidth+"px",
+                left:menuWidth+"px"
+            });
+
+        $body
+            .addClass("menu-open");
+
+        isOpen = true;
+    };
+
+
+    closeImmediateMenu = function(e) {
+        closeMenu();
+        $content.off("scroll.init");
+    };
+
+
+    onResize = function(e) {
+        var wrapperWidth = $window.width(),
+            menuWidth = defaultMenuWidth;
+
+        if (isOpen) {
+            if (wrapperWidth > mobileBreakpoint) {
+                wrapperWidth = wrapperWidth - menuWidth;
+            } else {
+                menuWidth = wrapperWidth;
+            }
+        } else {
+            menuWidth = 0;
+        }
+        $wrapper.css({
+            width:wrapperWidth+"px",
+            left: menuWidth
+        });
     };
 
 
     // expose public methods
     return {
         init: init,
+        toggleMenu: toggleMenu,
         openMenu: openMenu,
         closeMenu: closeMenu
     };

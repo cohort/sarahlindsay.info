@@ -25,7 +25,7 @@
     {{ content_for_header }}
 
     {{ 'css-vendor-normalize.css' | asset_url | stylesheet_tag }}
-    {{ 'css-vendor-slimbox2.css' | asset_url | stylesheet_tag }}
+    {{ 'css-vendor-magnific-popup.css' | asset_url | stylesheet_tag }}
     {{ 'css-app-icons.css' | asset_url | stylesheet_tag }}
     {{ 'css-app-gill-sans.css' | asset_url | stylesheet_tag }}
     {{ 'css-app-main.css' | asset_url | stylesheet_tag }}
@@ -43,30 +43,30 @@
     {% endif %}
 </head>
 
-<body id="body-{{ page_title | handle }}">
+{% assign bodyClass = 'light-bg' %}
+{% if template == 'page' or template == 'index' or template == '404' %}
+    {% assign bodyClass = '' %}
+{% endif %}
 
-    {% assign wrapperClass = 'light-bg' %}
-    {% if template == 'page' or template == 'index' or template == '404' %}
-        {% assign wrapperClass = '' %}
-    {% endif %}
+<body id="body-{{ page_title | handle }}" class="{{ bodyClass }}">
 
-    <div class="wrapper {{ wrapperClass }}">
-
-        {% if template == 'index' %}
-            <div class="site-bg js-parallax" data-parallax-el=".parallaxed" style="background-image:url({{'img-app-bg_shop.jpg' | asset_url}});"></div>
-        {% elsif template == 'page' %}
-            {% capture img_src %}img-app-bg_{{page.title | handle}}.jpg{% endcapture %}
-            <div class="site-bg" style="background-image:url({{ img_src | asset_url }});"></div>
-        {% elsif template == '404' %}
-            <div class="site-bg" style="background-image:url({{ 'img-app-bg_404.jpg' | asset_url }});"></div>
-        {% endif %}
-
-        <p class="menu-trigger-open">
+    <nav class="menu">
+        <p class="menu-trigger-close">
             <a href="#">
-                <span aria-hidden="true" class="icon icon-reorder"></span>
-                <span class="menu-text">Menu</span>
+                <span aria-hidden="true" class="icon icon-close"></span>
+                <span class="menu-text">Close</span>
             </a>
         </p>
+        <ul>
+            {% for link in linklists.main-menu.links %}
+            <li class="nav-item{% if forloop.first %} first{% elsif forloop.last %} last{% endif %}{% if link.active %} active{% endif %}">
+                {{ link.title | link_to: link.url }}
+            </li>
+            {% endfor %}
+        </ul>
+    </nav>
+
+    <div class="cart-hud-wrap">
         <div class="cart-hud">
             <div class="cart-trigger">
                 <a href="/cart">
@@ -80,24 +80,28 @@
             </div>
             <div class="cart-hud-message"></div>
         </div>
+    </div>
 
-        <nav class="menu">
-            <p class="menu-trigger-close">
-                <a href="#">
-                    <span aria-hidden="true" class="icon icon-reorder"></span>
-                    <span class="menu-text">Close</span>
-                </a>
-            </p>
-            <ul>
-                {% for link in linklists.main-menu.links %}
-                <li class="nav-item{% if forloop.first %} first{% elsif forloop.last %} last{% endif %}{% if link.active %} active{% endif %}">
-                    {{ link.title | link_to: link.url }}
-                </li>
-                {% endfor %}
-            </ul>
-        </nav>
+    <div class="wrapper">
+
+        {% if template == 'index' %}
+            <div class="site-bg js-parallax" data-parallax-el=".parallaxed" style="background-image:url({{'img-app-bg_shop.jpg' | asset_url}});"></div>
+        {% elsif template == 'page' %}
+            {% capture img_src %}img-app-bg_{{page.title | handle}}.jpg{% endcapture %}
+            <div class="site-bg" style="background-image:url({{ img_src | asset_url }});"></div>
+        {% elsif template == '404' %}
+            <div class="site-bg" style="background-image:url({{ 'img-app-bg_404.jpg' | asset_url }});"></div>
+        {% endif %}
 
         <div class="content">
+            <div class="menu-trigger-wrap">
+                <p class="menu-trigger-open">
+                    <a href="#">
+                        <span aria-hidden="true" class="icon icon-reorder"></span>
+                        <span class="menu-text">Menu</span>
+                    </a>
+                </p>
+            </div>
 
             {{ content_for_layout }}
 
@@ -120,9 +124,8 @@
     {{ 'js-vendor-console.js'  | asset_url | script_tag }}
     {{ 'js-vendor-jquery.sticky.js'  | asset_url | script_tag }}
 
-    {{ 'js-vendor-jquery.animate-enhanced.min.js'  | asset_url | script_tag }}
     {{ 'js-vendor-masonry.pkgd.min.js'  | asset_url | script_tag }}
-    {{ 'js-vendor-slimbox2.js'  | asset_url | script_tag }}
+    {{ 'js-vendor-jquery.magnific-popup.min.js'  | asset_url | script_tag }}
     {{ 'js-vendor-jquery.cookie.js'  | asset_url | script_tag }}
     {{ 'js-app-SL.js'  | asset_url | script_tag }}
     {{ 'js-app-shop.js'  | asset_url | script_tag }}
