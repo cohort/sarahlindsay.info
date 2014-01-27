@@ -24,6 +24,7 @@
     $content = $(".content"),
     sticked = [],
     windowHeight = $window.height(),
+    resizeTimeout = null,
     scroller = function() {
       var scrollTop = $content.scrollTop(),
         documentHeight = $content.height(),
@@ -68,7 +69,11 @@
       }
     },
     resizer = function() {
-      windowHeight = $content.height();
+      windowHeight = $window.height();
+      if (!!resizeTimeout) {
+        clearTimeout(resizeTimeout);
+      }
+      resizeTimeout = setTimeout(scroller, 50);
     },
     methods = {
       init: function(options) {

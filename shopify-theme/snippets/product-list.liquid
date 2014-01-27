@@ -5,7 +5,7 @@
         <h2 class="content-title">{{ settings.collection_title }}</h2>
     </header>
 
-    <div class="shop-categories js-sticky" data-sticky-top="110">
+    <div class="shop-categories js-sticky" data-sticky-top="113">
         <ul class="horizontal-list">
             <li><a href="/collections/all">All</a></li>
             {% for collection in collections %}
@@ -14,7 +14,7 @@
                 {% endif %}
             {% endfor %}
         </ul>
-        <div class="shop-categories-list-container js-sticky" data-sticky-top="68">
+        <div class="shop-categories-list-container js-sticky" data-sticky-top="80">
             <select class="shop-categories-list">
                 <option value="/collections/all/">View - All</option>
                 {% for collection in collections %}

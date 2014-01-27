@@ -148,6 +148,8 @@ textarea {
 
         input,
         textarea {
+            -webkit-appearance: none;
+            border-radius: 0;
         }
 
         input[type="submit"] {
@@ -263,7 +265,7 @@ textarea {
             position:absolute;
             left:50px;
             top:60px;
-            z-index:10;
+            z-index:5;
         }
 
         .menu-trigger-open {
@@ -304,6 +306,10 @@ textarea {
             .cart-hud-wrap {
                 top:8px;
                 right:10px;
+            }
+
+            .menu-open .cart-hud-wrap {
+                display:none;
             }
         }
 
@@ -476,6 +482,12 @@ textarea {
             border-top:1px solid #bfbfbf;
         }
 
+        @media (max-height:400px) {
+            .menu li a {
+                padding:10px 0;
+            }
+        }
+
         .menu li:first-child a {
             border-top:none;
         }
@@ -486,7 +498,8 @@ textarea {
             margin:0;
             position:relative;
             z-index:5;
-            overflow: auto;
+            overflow:auto;
+            /*-webkit-overflow-scrolling:touch;*/
             height:100%;
         }
 
@@ -604,6 +617,7 @@ textarea {
             min-height:117px;
             margin-left:auto;
             margin-right:auto;
+            -webkit-backface-visibility: hidden; /* fix safari layout weirdness */
         }
 
         @media (max-width:600px) {
@@ -699,6 +713,7 @@ textarea {
                 .is-sticky .content-header {
                     position:relative !important;
                     top:0 !important;
+                    left:0 !important;
                     z-index:1 !important;
                 }
             }
@@ -707,6 +722,7 @@ textarea {
                 .menu-open .is-sticky .content-header {
                     position:relative !important;
                     top:0 !important;
+                    left:0 !important;
                     z-index:1 !important;
                 }
             }
@@ -798,6 +814,11 @@ textarea {
 
 
     /* newsletter sign-up block */
+        .newsletter-wrap {
+            padding-left:20px;
+            padding-right:20px;
+        }
+
         .newsletter-signup {
             border-top:1px solid #cacaca;
             border-bottom:1px solid #cacaca;
@@ -809,12 +830,20 @@ textarea {
 
         /* override sticky for mobile */
             @media (max-width:870px) {
+                .menu-open .page-blog .sticky-wrapper {
+                    height:inherit !important;
+                }
+
                 .menu-open .is-sticky .newsletter-wrap {
                     position:static !important;
                 }
             }
 
             @media (max-width:650px) {
+                .page-blog .sticky-wrapper {
+                    height:inherit !important;
+                }
+
                 .is-sticky .newsletter-wrap {
                     position:static !important;
                 }
@@ -904,6 +933,9 @@ textarea {
             margin:0 auto;
             padding:0 20px;
             max-width:800px;
+            position:relative;
+            z-index:3;
+            -webkit-backface-visibility: hidden; /* fix safari layout weirdness */
         }
 
     /* page - site intro */
@@ -1437,7 +1469,9 @@ textarea {
 
 
     /* page - blog */
-        .page-blog {}
+        .page-blog {
+            padding:0;
+        }
 
         .page-blog .content-title-solo {
             padding-top:20px;
@@ -1447,6 +1481,7 @@ textarea {
         .blog-item {
             border-bottom:1px solid #cacaca;
             padding:2em 0;
+            margin:0 20px;
         }
 
         .blog-item-images {
@@ -1835,13 +1870,15 @@ textarea {
 
     /* sticky */
         .js-sticky {
-            z-index:3;
+            z-index:4;
             right:0;
             left:0;
             width:inherit;
             margin-left:auto;
             margin-right:auto;
+        }
 
+        .menu-transitioning .js-sticky {
             -webkit-transition: left 0.5s ease-in-out;
                -moz-transition: left 0.5s ease-in-out;
                 -ms-transition: left 0.5s ease-in-out;

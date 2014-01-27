@@ -16,7 +16,8 @@ SL.smoothScroll = (function() {
         $("a[href^='#']").on('click', function(e) {
             e.preventDefault();
             if (this.hash.length > 0) {
-                $content.animate({ scrollTop: $(this.hash).offset().top }, SL.transitionTime);
+                var scrollTop = $(this.hash).offset().top + $content.scrollTop();
+                $content.animate({ scrollTop: scrollTop }, SL.transitionTime);
             }
         });
     };

@@ -18,8 +18,11 @@ SL.menu = (function() {
         mobileBreakpoint = 600,
         isOpen = false,
 
+        // transition end events to listen for
+        transitionEnd = "webkitTransitionEnd otransitionend oTransitionEnd msTransitionEnd transitionend",
+
         // functions
-        init, toggleMenu, openMenu, closeMenu, openImmediateMenu, closeImmediateMenu, onResize;
+        init, toggleMenu, openMenu, closeMenu, openImmediateMenu, closeImmediateMenu, onResize, onTransitionEnd;
 
 
     // init
@@ -75,16 +78,18 @@ SL.menu = (function() {
             wrapperWidth = windowWidth - menuWidth;
         } else {
             menuWidth = windowWidth;
-            wrapperWidth = wrapperWidth;
+            wrapperWidth = windowWidth;
         }
 
         $wrapper
             .css({
                 width:wrapperWidth+"px",
                 left:menuWidth+"px"
-            });
+            })
+            .one(transitionEnd, onTransitionEnd);
 
         $body
+            .addClass("menu-transitioning")
             .addClass("menu-open");
 
         isOpen = true;
@@ -107,21 +112,21 @@ SL.menu = (function() {
         var wrapperWidth, menuWidth;
 
         if (windowWidth > mobileBreakpoint) {
-            menuWidth = defaultMenuWidth;
             wrapperWidth = windowWidth - menuWidth;
         } else {
-            menuWidth = windowWidth;
-            wrapperWidth = wrapperWidth;
+            wrapperWidth = windowWidth;
         }
 
         $wrapper
             .css({
                   width:windowWidth+"px",
                   left:0
-            });
+            })
+            .one(transitionEnd, onTransitionEnd);
 
 
         $body
+            .addClass("menu-transitioning")
             .removeClass("menu-open-immediate")
             .removeClass("menu-open");
 
@@ -174,6 +179,11 @@ SL.menu = (function() {
             width:wrapperWidth+"px",
             left: menuWidth
         });
+    };
+
+
+    onTransitionEnd = function(e) {
+        $body.removeClass("menu-transitioning");
     };
 
 
