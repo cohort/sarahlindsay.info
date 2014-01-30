@@ -25,7 +25,16 @@
     sticked = [],
     windowHeight = $window.height(),
     resizeTimeout = null,
+    scrollbarWidth,
     scroller = function() {
+
+      // http://stackoverflow.com/a/10984504
+      if (!scrollbarWidth) {
+        var $container = $("<div>").css({ height: 1, overflow: "scroll" }).appendTo("body");
+        var $child = $("<div>").css({ height: 2 }).appendTo($container);
+        scrollbarWidth = $container.width() - $child.width();
+        $container.remove();
+      }
       var scrollTop = $content.scrollTop(),
         documentHeight = $content.height(),
         dwh = documentHeight - windowHeight,
@@ -40,7 +49,7 @@
           if (s.currentTop !== null) {
             s.stickyElement
               .css('position', '')
-              .css('top', '');
+              .css({'top': '','right':''});
             s.stickyElement.parent().removeClass(s.className);
             s.currentTop = null;
           }
@@ -56,7 +65,7 @@
           if (s.currentTop != newTop) {
             s.stickyElement
               .css('position', 'fixed')
-              .css('top', newTop);
+              .css({'top': newTop,'right':scrollbarWidth+'px'});
 
             if (typeof s.getWidthFrom !== 'undefined') {
               s.stickyElement.css('width', $(s.getWidthFrom).width());
