@@ -80,6 +80,11 @@ SL.smoothScroll = (function() {
                     $wrapper.addClass(altClass);
                     if (Modernizr.svg) {
                         $svgObjects.each(function(count,svg){
+
+                            svg.style.display = "none";
+                            var x = svg.offsetHeight;
+                            svg.style.display = "inline-block";
+
                             var $svg = $(svg);
                             $svg
                                 .data("src", $svg.attr("src"))
@@ -94,6 +99,11 @@ SL.smoothScroll = (function() {
                     $wrapper.removeClass(altClass);
                     if (Modernizr.svg) {
                         $svgObjects.each(function(count,svg){
+
+                            svg.style.display = "none";
+                            var x = svg.offsetHeight;
+                            svg.style.display = "inline-block";
+
                             var $svg = $(svg);
                             $svg.attr("src", $svg.data("src"));
                         });
