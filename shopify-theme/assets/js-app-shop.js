@@ -48,7 +48,7 @@ SL.shop = (function() {
                 link = "read story";
                 var $introContainer = $('.site-intro');
                 if ($introContainer.length > 0) {
-                    url = "#body-welcome";
+                    url = "/";
                 } else {
                     url = "/";
                 }

@@ -2,6 +2,9 @@
 
     {% include 'site-intro' with page %}
 
-{% assign collection = collections.all %}
+{% comment %} Change this to 'all' to show all items on the home page {% endcomment %}
+{% assign current_collection = 'featured' %}
+
+{% assign collection = collections[current_collection] %}
 
     {% include 'product-list' with collection %}

@@ -7,19 +7,23 @@
 
     <div class="shop-categories js-sticky" data-sticky-top="113">
         <ul class="horizontal-list">
-            <li><a href="/collections/all">All</a></li>
-            {% for collection in collections %}
-                {% if collection.products.size > 0 %}
-                    <li><a href="{{ collection.url }}">{{ collection.title }}</a></li>
+            <li{% if collection.handle == "featured" %} class="current"{% endif %}><a href="/collections/featured">Featured</a></li>
+            {% for col in collections %}
+                {% if col.products.size > 0 %}
+                    {% if col.handle != "featured" %}
+                        <li{% if col.handle == collection.handle %} class="current"{% endif %}><a href="{{ col.url }}">{{ col.title }}</a></li>
+                    {% endif %}
                 {% endif %}
             {% endfor %}
         </ul>
         <div class="shop-categories-list-container js-sticky" data-sticky-top="80">
             <select class="shop-categories-list">
-                <option value="/collections/all/">View - All</option>
-                {% for collection in collections %}
-                    {% if collection.products.size > 0 %}
-                        <option value="{{ collection.url }}">View - {{ collection.title }}</option>
+                <option value="/collections/featured/"{% if collection.handle == "featured" %} selected{% endif %}>View - Featured</option>
+                {% for col in collections %}
+                    {% if col.products.size > 0 %}
+                        {% if col.handle != "featured" %}
+                            <option value="{{ col.url }}"{% if col.handle == collection.handle %} selected{% endif %}>View - {{ col.title }}</option>
+                        {% endif %}
                     {% endif %}
                 {% endfor %}
             </select>
